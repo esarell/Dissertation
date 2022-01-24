@@ -1,9 +1,9 @@
 # This is for Open Kiwi to use
 
 gold_files:
-    source_tags: data/WMT20/sentence_level/en_de.nmt/dev.source_tags
-    target_tags: data/WMT20/sentence_level/en_de.nmt/dev.tags
-    sentence_scores: data/WMT20/sentence_level/en_de.nmt/dev.hter
+    source_tags: /dev.source_tags
+    target_tags: /content/video_guided_machine_translation/dev.tags
+    sentence_scores: /content/video_guided_machine_translation/dev.hter
 
 # Two configuration options:
 # 1. (Recommended) Pass the root folders where the predictions live,
@@ -11,8 +11,8 @@ gold_files:
 predicted_dir:
     # The evaluation pipeline supports evaluating multiple predictions at the same time
     #   by passing the folders as a list
-    - /content/video_guided_machine_translation/saved/2021-12-03_1225/model-04_1.104.hdf5
-    - /content/video_guided_machine_translation/saved/2021-12-03_1225/model-02_1.104.hdf5
+    - /content/video_guided_machine_translation/Models/model-04_1.104.hdf5
+    - /content/video_guided_machine_translation/Models/model-02_1.148.hdf5
 
 # 2. Configure each predicted file separately
 # predicted_files:
