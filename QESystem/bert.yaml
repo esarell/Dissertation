@@ -38,7 +38,7 @@ defaults:
     ###################################################
     # Example of composition of configuration files
     #  this config is sourced from /config/data/wmt20.qe.en_de.yaml
-    - data: vatex/embeddings/training/vatex_training
+    - data: vatex_trainingY
 
 system:
     ###################################################
