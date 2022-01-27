@@ -11,7 +11,7 @@ from simple_settings import settings
 from data_generator import DataGenerator
 from data_processing import construct_parallel_corpus
 from dataset_type import DatasetType
-from model_2 import VmtModel
+from model import VmtModel
 from utilities.data_processing_utils import get_input_target_texts, find_max_sequence_length, remove_start_end_tokens
 from utilities.path_utils import generate_model_checkpoint_path, get_model_summary_path, create_directories, \
     generate_model_history_path
