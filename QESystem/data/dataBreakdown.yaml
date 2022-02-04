@@ -1,0 +1,31 @@
+data:
+    train:
+        input:
+            source: data/train.src
+            target: data/train.mt
+            alignments: data/train.src-mt.alignments
+            post_edit: data/train.pe
+
+        output:
+            source_tags: data/train.source_tags
+            target_tags: data/train.tags
+            sentence_scores: data/train.hter
+
+    valid:
+        input:
+            source: data/dev.src
+            target: data/dev.mt
+            alignments: data/dev.src-mt.alignments
+            post_edit: data/dev.pe
+
+        output:
+            source_tags: data/dev.source_tags
+            target_tags: data/dev.tags
+            sentence_scores: data/dev.hter
+
+    test:
+        input:
+            source: data/test.src
+            target: data/test.mt
+            alignments: data/test.src-mt.alignments
+            post_edit: data/test.pe
