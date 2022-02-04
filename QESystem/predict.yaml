@@ -5,19 +5,19 @@ run:
     predict_on_data_partition: test
 
 defaults:
-    - data: wmt20.qe.en_de
+    - data: dataBreakdown
 
 system:
-    load: best_model.torch
+    load: /content/video_guided_machine_translation/Model Vatex 1/model-04_1.104.hdf5
 
-    batch_size: 16
+    batch_size: 64
     num_data_workers: 0
 
     model:
         outputs:
             word_level:
-                target: true
-                gaps: true
-                source: true
+                target: false
+                gaps: false
+                source: false
             sentence_level:
                 hter: true
