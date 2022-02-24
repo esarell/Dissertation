@@ -1,7 +1,7 @@
 from typing import List, Dict
 import torch
 from transquest.algo.sentence_level.siamesetransquest.run_model import SiameseTransQuestModel
-#import sacrebleu
+import sacrebleu
 
 
 def calculate_bleu(results: List[Dict[str, str]]) -> float:
@@ -18,7 +18,7 @@ def calculate_bleu(results: List[Dict[str, str]]) -> float:
     #print(candidates)
     references = [[dct['target_sequence'] for dct in results]]
     predictions = model.predict([[candidates, references]])
-    print(predictions)
-    #bleu = sacrebleu.corpus_bleu(candidates, references)
+    print("TransQuest Result:"+predictions)
+    bleu = sacrebleu.corpus_bleu(candidates, references)
 
     return bleu.score
