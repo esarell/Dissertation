@@ -1,11 +1,11 @@
 import pickle
 from typing import Dict, Any, Union, List
 
-from tensorflow import keras as keras
+import keras
 import numpy as np
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.utils import plot_model
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from keras.preprocessing.text import Tokenizer
+from keras.utils import plot_model
 from simple_settings import settings
 
 from data_generator import DataGenerator
@@ -46,12 +46,13 @@ class ModelManager:
 
         parallel_corpus = construct_parallel_corpus(DATASETS, settings.PARALLEL_CORPUS_PATH)
         self.input_texts, self.target_texts = get_input_target_texts(parallel_corpus)
+        
         self.echo('Loaded parallel caption corpus')
 
         self.english_tokenizer = self.prepare_english_tokenizer()
         self.chinese_tokenizer = self.prepare_chinese_tokenizer()
-        self.input_token_index = self.chinese_tokenizer.word_index
-        self.target_token_index = self.english_tokenizer.word_index
+        self.input_token_index = self.english_tokenizer.word_index
+        self.target_token_index = self.chinese_tokenizer.word_index
         self.tokenizer_info = self.get_tokenizer_info()
         self.print_parallel_corpus_info()
         self.dimensions = self.get_dimensions_from_tokenizers()
@@ -94,9 +95,9 @@ class ModelManager:
         :return: tokeniser that has been fit on English target texts
         """
 
-        english_tokenizer = Tokenizer(num_words=settings.MAX_NUM_TARGET_TOKENIZER_WORDS, lower=False,
+        english_tokenizer = Tokenizer(num_words=settings.MAX_NUM_SOURCE_TOKENIZER_WORDS, lower=False,
                                       char_level=False, filters=' ', oov_token='unk')
-        english_tokenizer.fit_on_texts(self.target_texts)
+        english_tokenizer.fit_on_texts(self.input_texts)
         return english_tokenizer
 
     def prepare_chinese_tokenizer(self) -> Tokenizer:
@@ -106,9 +107,9 @@ class ModelManager:
         :return: tokeniser that has been fit on Chinese source texts
         """
 
-        chinese_tokenizer = Tokenizer(num_words=settings.MAX_NUM_SOURCE_TOKENIZER_WORDS, lower=False,
+        chinese_tokenizer = Tokenizer(num_words=settings.MAX_NUM_TARGET_TOKENIZER_WORDS, lower=False,
                                       char_level=False, filters=' ', oov_token='unk')
-        chinese_tokenizer.fit_on_texts(self.input_texts)
+        chinese_tokenizer.fit_on_texts(self.target_texts)
         
         print(chinese_tokenizer)
         return chinese_tokenizer
@@ -123,8 +124,8 @@ class ModelManager:
         english_vocab_size = len(self.english_tokenizer.word_index) + 1
         chinese_vocab_size = len(self.chinese_tokenizer.word_index) + 1
 
-        max_english_seq_length = find_max_sequence_length(self.target_texts)
-        max_chinese_seq_length = find_max_sequence_length(self.input_texts)
+        max_english_seq_length = find_max_sequence_length(self.input_texts)
+        max_chinese_seq_length = find_max_sequence_length(self.target_texts)
 
         tokenizer_info = {
             'num_input_texts': len(self.input_texts),
@@ -161,10 +162,10 @@ class ModelManager:
         :return: dictionary containing information about dimensions needed for batch generation
         """
 
-        dimensions = {"max_encoder_seq_length": self.tokenizer_info["max_chinese_seq_length"],
-                      "max_decoder_seq_length": self.tokenizer_info["max_english_seq_length"],
-                      "num_encoder_tokens": self.tokenizer_info["chinese_vocab_size"],
-                      "num_decoder_tokens": self.tokenizer_info["english_vocab_size"]}
+        dimensions = {"max_encoder_seq_length": self.tokenizer_info["max_english_seq_length"],
+                      "max_decoder_seq_length": self.tokenizer_info["max_chinese_seq_length"],
+                      "num_encoder_tokens": self.tokenizer_info["english_vocab_size"],
+                      "num_decoder_tokens": self.tokenizer_info["chinese_vocab_size"]}
 
         return dimensions
 
@@ -189,6 +190,7 @@ class ModelManager:
                                   use_video_embeddings=use_video_embeddings)
         
         
+
         return generator
 
     def compile_model(self) -> None:
@@ -222,7 +224,6 @@ class ModelManager:
         # Save the model architecture as a PNG file plot_model(self.entire_model, to_file=model_summary_path)
         plot_model(self.entire_model, to_file=model_summary_path)
 
-        print(self.entire_model.summary())
         # Train model
         self.echo('Calling model.fit_generator!')
         history = self.entire_model.fit_generator(generator=self.training_generator,
@@ -237,7 +238,7 @@ class ModelManager:
         history_save_path = generate_model_history_path()
         create_directories(history_save_path)
         #with open(history_save_path, 'wb') as fp:
-            #pickle.dump(history, fp)
+         #   pickle.dump(history, fp)
 
         self.echo(f'Training history saved to {history_save_path}')
 
@@ -280,11 +281,10 @@ class ModelManager:
         """
 
         # Encode the input as state vectors.
-        # states_value = self.sampling_encoder.predict(input_seq)
-        encoder_output, state_h, state_c = self.sampling_encoder.predict(input_seq)
+        states_value = self.sampling_encoder.predict(input_seq)
 
         # Generate empty target sequence of length 1.
-        target_seq = np.zeros((1, 1, self.tokenizer_info["english_vocab_size"]))
+        target_seq = np.zeros((1, 1, self.tokenizer_info["chinese_vocab_size"]))
 
         # Populate the first token of target sequence with the start token
         target_seq[0, 0, self.target_token_index[settings.SEQUENCE_START_TOKEN]] = 1.
@@ -295,7 +295,7 @@ class ModelManager:
         decoded_sentence = []
         while not stop_condition:
             output_tokens, hidden_state, cell_state = self.sampling_decoder.predict(
-                [target_seq, state_h, state_c, encoder_output])
+                [target_seq] + states_value)
 
             # Sample a token
             sampled_token_index = np.argmax(output_tokens[0, -1, :])
@@ -304,11 +304,11 @@ class ModelManager:
 
             # Exit condition: either hit max length or find sequence end token.
             if (sampled_word == settings.SEQUENCE_END_TOKEN or
-                    len(decoded_sentence) > self.tokenizer_info["max_english_seq_length"]):
+                    len(decoded_sentence) > self.tokenizer_info["max_chinese_seq_length"]):
                 stop_condition = True
 
             # Update the target sequence
-            target_seq = np.zeros((1, 1, self.tokenizer_info["english_vocab_size"]))
+            target_seq = np.zeros((1, 1, self.tokenizer_info["chinese_vocab_size"]))
             target_seq[0, 0, sampled_token_index] = 1.
 
             # Update states
@@ -340,11 +340,15 @@ class ModelManager:
         batch_info = self.test_generator.generate_batch_for_testing(batch_index)
         encoder_input_data = batch_info[0][0][0]
         input_texts = batch_info[1][0]
+        
         target_texts = batch_info[1][1]
 
         results = []
         for idx, input_data in enumerate(encoder_input_data):
             input_sequence_enc = encoder_input_data[idx:idx + 1]
+            print(idx)
+            print(input_texts)
+            
             input_sequence = input_texts[idx]
             target_sequence = target_texts[idx]
             decoded_sentence = self.decode_sequence(input_sequence_enc)

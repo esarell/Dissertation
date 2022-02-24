@@ -148,8 +148,8 @@ def get_input_target_texts(parallel_corpus: np.ndarray) -> Tuple[List[str], List
     :return: list of input texts and list of target texts
     """
 
-    input_texts = parallel_corpus[:, 0]
-    target_texts = parallel_corpus[:, 1]
+    input_texts = parallel_corpus[:, 1]
+    target_texts = parallel_corpus[:, 0]
     return input_texts, target_texts
 
 

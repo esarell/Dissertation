@@ -1,15 +1,17 @@
  # 0. About
-The experimental machine translation system developed by Paulius Staugaitis is used in the "Multimodal Machine Translation through visuals" final year project.
+This is a code repository for the final year project "Incorporating Visual Information into Neural Machine 
+ Translation" by Paulius Staugaitis.
+
 The following documentation describes how to set up the environment and run the translation software.
 
 # 1. Setup
 ## 1.1 Obtaining the Required Data
-The VaTeX dataset should be downloaded from https://eric-xw.github.io/vatex-website/download.html
+The VaTeX dataset should be downloaded from https://vatex.org/main/download.html.
 
 In particular, the following files are needed:
-* Training dataset: https://eric-xw.github.io/vatex-website/data/vatex_training_v1.0.json
-* Validation dataset: https://eric-xw.github.io/vatex-website/data/vatex_validation_v1.0.json
-* I3D video features for the training and validation datasets: https://eric-xw.github.io/vatex-website/data/vatex_training_v1.0.json
+* Training dataset: https://vatex.org/main/data/vatex_training_v1.0.json
+* Validation dataset: https://vatex.org/main/data/vatex_validation_v1.0.json
+* I3D video features for the training and validation datasets: https://vatex-feats.s3.amazonaws.com/trainval.zip 
 
 JSON files may be renamed to use shorter names, and the video feature archive should be unzipped (caution: there is a
  large number of files in the archive). The values in the included settings files in the `settings` directory provide

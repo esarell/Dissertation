@@ -86,6 +86,9 @@ simple-settings==0.19.1
 six==1.14.0
 smart-open==1.10.0
 tabulate==0.8.7
+tensorboard==2.1.0
+tensorflow==2.1.0
+tensorflow-estimator==2.1.0
 termcolor==1.1.0
 textsearch==0.0.17
 tqdm==4.43.0

@@ -32,6 +32,7 @@ def load_raw_dataset(filepath: str, max_num_caption_pairs: int) -> List[Dict[str
     dataset = dataset[:entry_limit]
     
     
+    
 
     print(f'Loaded {len(dataset) * settings.TOTAL_CAPTIONS_PER_VIDEO} captions '
           f'from {len(dataset)} distinct videos')
@@ -57,9 +58,12 @@ def extract_parallel_captions(dataset: List[Dict]) -> List[Dict]:
     for video_caption_dict in dataset:
         # Out of the 10 video caption pairs, only the last 5 pairs are parallel translations.
         # Keep only the parallel caption pairs.
+        
         video_caption_dict.update({'chCap': video_caption_dict['chCap'][5:],
                                    'enCap': video_caption_dict['enCap'][5:]})
-
+    print(dataset[0]['videoID'])
+    video =[]
+    
     count_after = count_sequence_pairs(dataset)
     print(f'Extracted {count_after} parallel caption pairs from {count_before} pairs in the original dataset')
 

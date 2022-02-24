@@ -2,7 +2,7 @@ import pickle
 from typing import List, Dict, Union, Tuple
 
 import numpy as np
-from tensorflow.keras.utils import Sequence
+from keras.utils import Sequence
 from simple_settings import settings
 
 from dataset_type import DatasetType
@@ -127,8 +127,8 @@ class DataGenerator(Sequence):
         # 	that are possible)
 
         for i, id in enumerate(item_ids_in_batch):
-            input_text = self.dataset[id]['ch_seq']
-            target_text = self.dataset[id]['en_seq']
+            input_text = self.dataset[id]['en_seq']
+            target_text = self.dataset[id]['ch_seq']
             video_id = self.dataset[id]['video_id']
 
             if settings.ENVIRONMENT != 'PC':
@@ -206,8 +206,8 @@ class DataGenerator(Sequence):
 
         """
         item_ids_in_batch = self.get_item_ids_in_batch(batch_index)
-        input_texts = [self.dataset[id]['ch_seq'] for id in item_ids_in_batch]
-        target_texts = [self.dataset[id]['en_seq'] for id in item_ids_in_batch]
+        input_texts = [self.dataset[id]['en_seq'] for id in item_ids_in_batch]
+        target_texts = [self.dataset[id]['ch_seq'] for id in item_ids_in_batch]
 
         # Include input texts and target texts, which are not returned by the __getitem__ method
         return self.__getitem__(batch_index), [input_texts, target_texts]
