@@ -93,7 +93,6 @@ termcolor==1.1.0
 textsearch==0.0.17
 tqdm==4.43.0
 traitlets==4.3.3
-transquest==1.1.1
 typed-ast==1.4.1
 typing==3.7.4.1
 typing-extensions==3.7.4.2
