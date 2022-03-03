@@ -1,7 +1,11 @@
 from typing import List, Dict
-import torch
-from transquest.algo.sentence_level.siamesetransquest.run_model import SiameseTransQuestModel
+from unittest import result
+
+from matplotlib.font_manager import json_load
+#import torch
+#from transquest.algo.sentence_level.siamesetransquest.run_model import SiameseTransQuestModel
 import sacrebleu
+import json
 
 
 def calculate_bleu(results: List[Dict[str, str]]) -> float:
@@ -20,5 +24,10 @@ def calculate_bleu(results: List[Dict[str, str]]) -> float:
     predictions = model.predict([[candidates, references]])
     print("TransQuest Result:"+predictions)
     bleu = sacrebleu.corpus_bleu(candidates, references)
+    data = json_load(results)
+    with open('QEdata.json', 'w') as f:
+        json.dump(results, f)
+    f.close()
+
 
     return bleu.score
