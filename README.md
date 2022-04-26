@@ -1,6 +1,6 @@
  # 0. About
 This is a code repository for the final year project "Evaluation Of Multimodal Subtitle Generator" by Elizabeth Sarell.
-The code for the Multimodal Machine Translator (MMT) is provided by Yan Meng and Paulius Staugaitis.
+The code for the Multimodal Machine Translator (MMT) is provided by Yan Meng.
 The following documentation describes how to set up the environment and run the translation software.
 
 # 1. Setup
